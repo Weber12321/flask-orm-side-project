@@ -2,7 +2,6 @@ import configparser
 from flask import Flask
 
 
-
 app = Flask(__name__)
 
 
@@ -17,6 +16,8 @@ def show_list():
 @app.route('/input/{id}')
 def input_data():
     pass
+
+
 
 
 
