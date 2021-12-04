@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% include 'header.html' %}
+
+{% block title %} Home {% endblock %}
+{% block body %}
+    <table class="table table-hover table-dark">
+    <tr>
+        <th>ID</th>
+        <th>ITEM</th>
+        <th>DATE</th>
+        <th>AMOUNT</th>
+        <th>PAYMENT</th>
+        <th>CARD</th>
+        <th>STATUS</th>
+        <th>purpose</th>
+        <th>insert_time</th>
+        <th>update_time</th>
+        <th>insert_by</th>
+        <th>update_by</th>
+        <th>description</th>
+    </tr>
+    {% for row in accounting %}
+        <tr>
+            <td>{{ row.id }}</td>
+            <td>{{ row.items }}</td>
+            <td>{{ row.date_info }}</td>
+            <td>{{ row.amount }}</td>
+            <td>{{ row.payment }}</td>
+            <td>{{ row.card }}</td>
+            <td>{{ row.status }}</td>
+            <td>{{ row.purpose }}</td>
+            <td>{{ row.insert_time }}</td>
+            <td>{{ row.update_time }}</td>
+            <td>{{ row.insert_by }}</td>
+            <td>{{ row.update_by }}</td>
+            <td>{{ row.description }}</td>
+            <td>
+                <a href="/update/{{row.id}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{row.id}}">Edit</a>
+                <a href="/delete/{{row.id}}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure To Delete ?')">Delete</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}
