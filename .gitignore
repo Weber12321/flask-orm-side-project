@@ -25,5 +25,15 @@ htmlcov/
 .coverage.*
 *,cover
 
+# csv and xlsx
+*.csv
+*.xlsx
+
 # configuration
 config.ini
+
+# test
+test.py
+
+# log
+.log

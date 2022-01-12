@@ -3,7 +3,7 @@ import ast
 from datetime import datetime
 
 import flask_login
-from flask import Flask, redirect, url_for, render_template, request
+from flask import Flask, redirect, url_for, render_template, request, flash
 from flask_sqlalchemy import SQLAlchemy
 
 from utils.create_table import create_table_if_not_exist
@@ -29,7 +29,7 @@ class User(flask_login.UserMixin):
 
 class Account(db.Model):
     __tablename__ = 'account'
-    id = db.Column(db.Integer, primary_key=True)
+    _id = db.Column(db.Integer, primary_key=True)
     items = db.Column(db.String(30))
     date_info = db.Column(db.Date, nullable=False)
     amount = db.Column(db.Integer, nullable=False)
@@ -44,10 +44,10 @@ class Account(db.Model):
     update_by = db.Column(db.String(30), default='Weber')
     description = db.Column(db.String(300), nullable=True)
 
-    def __init__(self, items, date_info, amount, payment, card,
+    def __init__(self, _id, items, date_info, amount, payment, card,
                  status, purpose, insert_time, insert_by,
                  update_time, update_by, description):
-
+        self.id = _id
         self.items = items
         self.date_info = date_info
         self.amount = amount
@@ -61,7 +61,6 @@ class Account(db.Model):
         self.update_by = update_by
         self.description = description
 db.create_all()
-db.session.commit()
 
 users = ast.literal_eval(config['DEV_FLASK_CONFIG']['users'])
 
@@ -123,7 +122,7 @@ def logout():
 def unauthorized_handler():
     return 'Unauthorized'
 
-@app.route('/account_list')
+@app.route('/account_list', methods=['GET'])
 def index_page():  # put application's code here
     all_data = Account.query.all()
     return render_template("index.html", accounting=all_data)
@@ -132,9 +131,34 @@ def index_page():  # put application's code here
 # def show_list():
 #     return "HI"
 #
-@app.route('/input/{id}', methods=['GET', 'POST'])
-def input_data():
-    pass
+@app.route('/input', methods=['POST'])
+def input_data(request):
+    if request.method == 'POST':
+        _id = request.form['id']
+        item = request.form['item']
+        date_info = request.form['date_info']
+        amount = request.form['amount']
+        payment = request.form['payment']
+        card = request.form['card']
+        status = request.form['status']
+        purpose = request.form['purpose']
+        insert_time = datetime.now()
+        insert_by = request.form['insert_by']
+        update_time = None
+        update_by = None
+        description = request.form['description']
+        new = Account(_id=_id, items=item, date_info=date_info, amount=amount,
+                      payment=payment, card=card, status=status, purpose=purpose,
+                      insert_time=insert_time, insert_by=insert_by, update_time=update_time,
+                      update_by=update_by, description=description)
+
+        db.session.add(new)
+        db.session.commit()
+
+        flash("Inserted Successfully")
+
+        return redirect(url_for('index_page'))
+
 #
 # @app.route('/update/{id}', methods=['PUT', 'POST'])
 #
